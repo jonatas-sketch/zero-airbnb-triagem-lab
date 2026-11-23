@@ -2,6 +2,7 @@ const status = document.querySelector("#status");
 const filter = document.querySelector("#filter");
 const metrics = document.querySelector("#metrics");
 const table = document.querySelector("#rows");
+const cases = document.querySelector("#cases");
 const labels = { escalate: "Escalated", auto_answer: "Auto-answer" };
 
 function addMetric(label, value) {
@@ -13,6 +14,24 @@ function addMetric(label, value) {
   number.textContent = value;
   card.append(name, number);
   metrics.append(card);
+}
+
+function showCases(predictions, examples) {
+  const byId = new Map(predictions.map((row) => [row.message_id, row]));
+  for (const example of examples ?? []) {
+    const row = byId.get(example.message_id);
+    if (!row) continue;
+    const card = document.createElement("div");
+    card.className = "metric case";
+    const label = document.createElement("dt");
+    label.textContent = example.label;
+    const sample = document.createElement("dd");
+    sample.textContent = `${row.message_id} · ${labels[row.decision]}`;
+    const detail = document.createElement("small");
+    detail.textContent = `${row.matched_rule} · ${row.danger_score.toFixed(4)}`;
+    card.append(label, sample, detail);
+    cases.append(card);
+  }
 }
 
 function renderTable(predictions, spotlight) {
@@ -50,6 +69,7 @@ try {
   addMetric("Messages evaluated", results.evaluated);
   addMetric("Missed safety escalations", results.missed_safety_escalations);
   addMetric("Correct routine auto-answers", `${results.correct_routine_auto_answers} / 30 required`);
+  showCases(results.predictions, results.examples);
   renderTable(results.predictions, results.spotlight_message_id);
   filter.addEventListener("change", () => renderTable(results.predictions, results.spotlight_message_id));
 } catch {

@@ -37,7 +37,18 @@ def score(source: Path):
          and row["message_type"] == "lockout"),
         None,
     )
+    example_labels = {
+        "MSG-072": "Calm lockout in Lisbon",
+        "MSG-056": "Urgent lockout",
+        "MSG-070": "Urgent wording, routine check-out",
+    }
+    examples = [
+        {"message_id": row["message_id"], "label": example_labels[row["message_id"]]}
+        for row in rows if row["message_id"] in example_labels
+    ]
+    examples.sort(key=lambda example: list(example_labels).index(example["message_id"]))
     return {
+        "examples": examples,
         "spotlight_message_id": lisbon_message,
         "evaluated": len(predictions),
         "safety": labels_and_decisions[("safety", "escalate")] + missed_safety,

@@ -16,7 +16,7 @@ p { color: #435366; }
   color: #654211;
   padding: 15px 18px;
 }
-#metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+#metrics, #cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
 .metric, section { background: #fff; border: 1px solid #d5dee9; border-radius: 14px; }
 .metric { padding: 18px; }
 dt { color: #435366; font-size: .9rem; }
@@ -33,3 +33,7 @@ td:first-child, td:last-child, .rule { font-variant-numeric: tabular-nums; }
 .rule { font-family: ui-monospace, monospace; font-size: .8rem; }
 .escalate { color: #9b271d; font-weight: 680; }
 .auto_answer { color: #126343; font-weight: 680; }
+
+.case { display: grid; gap: 4px; }
+.case dd { font-size: 1.05rem; }
+.case small { color: #435366; line-height: 1.45; }
