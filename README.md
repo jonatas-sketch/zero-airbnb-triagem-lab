@@ -95,3 +95,11 @@ The verified run reached 50 of 50 messages, with 13 safety escalations and zero 
 Build prompt excerpt: “Render the actual POST /triage holdout results in a public read-only dashboard. Show the two course metrics against their targets, place Lisbon and escalations first, and render only message IDs and sanitized decisions.” In review I excluded guest information, original labels and booking details from the deploy and made the unfulfilled threshold visible above the table.
 
 After the Zero review, the Vercel dashboard highlights [three verified rows side by side](dashboard/verified-comparison.png): calm Lisbon lockout MSG-072, urgent lockout MSG-056, and urgent wording on routine check-out MSG-070. The observed endpoint results and metrics remain the same.
+
+## API schema verification
+
+Schemathesis exercised the generated OpenAPI contract in-process and reported **92 requests with zero server errors** in the observed run. It checked HTTP server status and response conformance.
+
+```sh
+PYTHONPATH=. DANGER_EXAMPLES_PATH=/local/path/to/course-danger-examples.csv uv run --python 3.12 --with-requirements requirements-api.txt --with schemathesis --with pytest pytest -q -s examples/check_api_schema.py
+```
