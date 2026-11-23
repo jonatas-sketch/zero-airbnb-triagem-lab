@@ -90,4 +90,4 @@ uv run --python 3.12 --with-requirements requirements-api.txt python examples/sc
 python -m http.server 58763 --bind 127.0.0.1 --directory dashboard
 ```
 
-The verified run reached 50 of 50 messages, with 13 safety escalations and zero missed safety escalations. It made 0 of the required 30 correct routine auto-answers. The supplied booking table contains no exact booking IDs for the held-out messages. This read-only preview documents the results and keeps actual booking data local. A passing run and the public dashboard are pending a compatible booking table.
+The verified run reached 50 of 50 messages, with 13 safety escalations and zero missed safety escalations. It made 0 of the required 30 correct routine auto-answers. The supplied booking table matches none of the 49 populated held-out booking IDs. One held-out message has a blank booking ID. A direct SQL comparison produced zero joins even after trimming and uppercasing. This read-only preview documents the results and keeps actual booking data local. A passing run and the public dashboard are pending a compatible booking table.

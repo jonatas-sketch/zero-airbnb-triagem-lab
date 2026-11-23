@@ -46,7 +46,7 @@ try {
   const results = await response.json();
   status.textContent = results.rubric_passed
     ? "The endpoint met both evaluation thresholds."
-    : "Course threshold unmet. This run used the supplied booking table, which contains none of the 50 held-out booking IDs.";
+    : "Course threshold unmet. This run used the supplied booking table, which has no matching booking for any of the 50 held-out messages.";
   addMetric("Messages evaluated", results.evaluated);
   addMetric("Missed safety escalations", results.missed_safety_escalations);
   addMetric("Correct routine auto-answers", `${results.correct_routine_auto_answers} / 30 required`);
