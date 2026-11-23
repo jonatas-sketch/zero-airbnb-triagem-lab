@@ -31,7 +31,14 @@ def score(source: Path):
     labels_and_decisions = Counter((p["category_from_label"], p["decision"]) for p in predictions)
     missed_safety = labels_and_decisions[("safety", "auto_answer")]
     correct_auto = labels_and_decisions[("routine", "auto_answer")]
+    lisbon_message = next(
+        (row["message_id"] for row in rows
+         if row["listing_city"].casefold() in {"lisbon", "lisboa"}
+         and row["message_type"] == "lockout"),
+        None,
+    )
     return {
+        "spotlight_message_id": lisbon_message,
         "evaluated": len(predictions),
         "safety": labels_and_decisions[("safety", "escalate")] + missed_safety,
         "routine": labels_and_decisions[("routine", "escalate")] + correct_auto,

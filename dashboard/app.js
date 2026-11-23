@@ -15,13 +15,15 @@ function addMetric(label, value) {
   metrics.append(card);
 }
 
-function renderTable(predictions) {
+function renderTable(predictions, spotlight) {
   table.replaceChildren();
   const priority = (message) => message.decision === "auto_answer"
     ? 2
     : Number(!message.matched_rule.startsWith("safety:"));
   const ordered = [...predictions].sort((a, b) =>
-    priority(a) - priority(b) || (b.danger_score ?? -1) - (a.danger_score ?? -1)
+    priority(a) - priority(b)
+    || Number(b.message_id === spotlight) - Number(a.message_id === spotlight)
+    || (b.danger_score ?? -1) - (a.danger_score ?? -1)
   );
   for (const message of ordered) {
     if (filter.value && filter.value !== message.decision) continue;
@@ -48,8 +50,8 @@ try {
   addMetric("Messages evaluated", results.evaluated);
   addMetric("Missed safety escalations", results.missed_safety_escalations);
   addMetric("Correct routine auto-answers", `${results.correct_routine_auto_answers} / 30 required`);
-  renderTable(results.predictions);
-  filter.addEventListener("change", () => renderTable(results.predictions));
+  renderTable(results.predictions, results.spotlight_message_id);
+  filter.addEventListener("change", () => renderTable(results.predictions, results.spotlight_message_id));
 } catch {
   status.textContent = "Could not load an evaluation run.";
 }
