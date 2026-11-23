@@ -54,3 +54,5 @@ Build prompt excerpt: “Embed every known danger example and all 50 guest messa
 ```sh
 uv run --python 3.12 --with-requirements requirements-danger.txt python examples/score_danger.py /path/to/course-sample.csv /path/to/danger-examples.csv
 ```
+
+For the live agent, I added a separate human-review band from 0.890 up to 0.900. A near-threshold score at 0.890 or higher escalates even when the booking looks routine. The danger CSV flag still means the score reached 0.900. MSG-012 and MSG-050 move to human review under this policy. I treat scores below 0.890 only as candidates for the other gates, never as evidence that a message is safe.
