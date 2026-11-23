@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Guest Support Triage · Holdout Run</title>
+<link rel="stylesheet" href="style.css">
+<main>
+  <header>
+    <h1>Guest support triage</h1>
+    <p>Read-only results for the held-out course messages.</p>
+  </header>
+  <p id="status" role="status">Loading evaluation…</p>
+  <dl id="metrics" aria-label="Evaluation summary"></dl>
+  <section aria-labelledby="rows-title">
+    <div class="toolbar">
+      <h2 id="rows-title">Message decisions</h2>
+      <label>Decision <select id="filter"><option value="">All</option><option value="escalate">Escalated</option><option value="auto_answer">Auto-answer</option></select></label>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col">Message ID</th><th scope="col">Decision</th><th scope="col">Reason</th><th scope="col">Matched rule</th><th scope="col">Danger score</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<script type="module" src="app.js"></script>
+</html>

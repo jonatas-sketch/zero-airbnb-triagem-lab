@@ -80,3 +80,14 @@ uv run --python 3.12 --with-requirements requirements-api.txt uvicorn triage_api
 ```
 
 Build prompt excerpt: “Build a typed FastAPI POST /triage endpoint. Apply deterministic safety rules and multilingual danger detection before read-only Supabase lookup or OpenRouter generation. Use exact booking IDs, decline missing and duplicate rows, and validate one fixed response shape. Never send guest text, booking IDs, or values to OpenRouter. Verify the Lisbon case and a routine exact-ID fixture with real local Supabase and OpenRouter calls.” Claude Code was unavailable due to the account quota. On review I rejected positional row matching and changed the model interface to accept only preapproved field names, with the final values rendered by the API.
+
+## Held-out evaluation preview
+
+The holdout scorer invokes the FastAPI endpoint on the input fields and adds the course labels only after the decisions return. Use the same private server environment as the API.
+
+```sh
+uv run --python 3.12 --with-requirements requirements-api.txt python examples/score_holdout.py /local/path/to/holdout.csv > dashboard/results.json
+python -m http.server 58763 --bind 127.0.0.1 --directory dashboard
+```
+
+The verified run reached 50 of 50 messages, with 13 safety escalations and zero missed safety escalations. It made 0 of the required 30 correct routine auto-answers. The supplied booking table contains no exact booking IDs for the held-out messages. This read-only preview documents the results and keeps actual booking data local. A passing run and the public dashboard are pending a compatible booking table.
