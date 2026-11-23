@@ -1,0 +1,10 @@
+{
+  "distinct_holdout_ids": 50,
+  "distinct_imported_ids": 49,
+  "exact_matches": 0,
+  "holdout_ids_in_expected_format": 49,
+  "holdout_rows": 50,
+  "imported_bookings": 50,
+  "imported_ids_in_expected_format": 50,
+  "normalized_matches": 0
+}
