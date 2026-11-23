@@ -56,3 +56,27 @@ uv run --python 3.12 --with-requirements requirements-danger.txt python examples
 ```
 
 For the live agent, I added a separate human-review band from 0.890 up to 0.900. A near-threshold score at 0.890 or higher escalates even when the booking looks routine. The danger CSV flag still means the score reached 0.900. MSG-012 and MSG-050 move to human review under this policy. I treat scores below 0.890 only as candidates for the other gates, never as evidence that a message is safe.
+
+## Stage 3: Triage API with Supabase and OpenRouter
+
+The FastAPI `POST /triage` returns exactly `message_id`, `decision`, `reason`, `matched_rule` and `danger_score`. It runs independent safety rules and the multilingual detector before any booking lookup or model call. It hands off danger, near-threshold scores, unknown intent, missing or duplicate bookings, inconsistent listing city, malformed generation and unavailable dependencies. It looks up allowlisted fields by exact `booking_id` through the Supabase Data API. The dedicated reader role can select those fields and cannot mutate the table. Local Supabase holds all 50 booking fixtures with door and Wi-Fi codes excluded. OpenRouter receives only routine intent and permitted field names and produces a structured field selection. The service fills the verified facts from Supabase.
+
+The two supplied development files do not have a verified join. 48 of the 50 guest messages have no matching booking ID, and the two remaining cases contain either duplicate bookings or a conflicting listing city. The routine integration case below is a controlled message created for one unambiguous row in the supplied mock bookings. Both external adapters operated on that case. It is distinct from the original 50 guest rows.
+
+```text
+Original course Lisbon message
+{"message_id":"MSG-037","decision":"escalate","reason":"Send to a human immediately; a safety rule matched.","matched_rule":"safety:lockout","danger_score":0.905668}
+
+Controlled routine message, genuine lookup in the supplied mock table
+{"message_id":"LAB-ROUTINE-01","decision":"auto_answer","reason":"checkout at: 2026-10-24 11:00","matched_rule":"routine:checkout","danger_score":0.839069}
+```
+
+The local run also checked conflicting city and missing booking ID return an escalation, and malformed requests get an HTTP 422. The anonymous role could not read the booking table.
+
+Run with Python 3.12, use `supabase/bookings_schema.sql` as a migration in a dedicated local Supabase instance, and load the fixture with `examples/import_bookings.py`. Supply a short-lived reader token, the local Supabase HTTP URL, a free OpenRouter model configured with structured outputs, and the original local danger example path through private environment variables. See `.env.example`.
+
+```sh
+uv run --python 3.12 --with-requirements requirements-api.txt uvicorn triage_api:app --host 127.0.0.1 --port 8000
+```
+
+Build prompt excerpt: “Build a typed FastAPI POST /triage endpoint. Apply deterministic safety rules and multilingual danger detection before read-only Supabase lookup or OpenRouter generation. Use exact booking IDs, decline missing and duplicate rows, and validate one fixed response shape. Never send guest text, booking IDs, or values to OpenRouter. Verify the Lisbon case and a routine exact-ID fixture with real local Supabase and OpenRouter calls.” Claude Code was unavailable due to the account quota. On review I rejected positional row matching and changed the model interface to accept only preapproved field names, with the final values rendered by the API.

@@ -1,0 +1,4 @@
+-r requirements-danger.txt
+fastapi
+httpx
+uvicorn
